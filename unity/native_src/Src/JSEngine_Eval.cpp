@@ -5,8 +5,8 @@
 * This file is subject to the terms and conditions defined in file 'LICENSE', which is part of this source code package.
 */
 #include <algorithm>
-#include <‌iostream>
-#include <‌chrono>
+#include <iostream>
+#include <chrono>
 #include "JSEngine.h"
 #include "Log.h"
 #if WITH_QUICKJS
@@ -103,7 +103,7 @@ namespace puerts {
         PLog(puerts::Log, "[PuertsDLL]JsEngine->ModuleResolver start");
         const char* Code = JsEngine->ModuleResolver(Specifier_std.c_str(), JsEngine->Idx, pathForDebug);
 
-        elapsed = std::chrono::duration_cast<‌std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - m_beg).count();
+        elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - m_beg).count();
         m_beg = std::chrono::high_resolution_clock::now();
         PLog(puerts::Log, "[PuertsDLL]JsEngine->ModuleResolver over elapsed=%f", elapsed);
 
@@ -131,7 +131,7 @@ namespace puerts {
 
         v8::ScriptCompiler::Source Source(FV8Utils::V8String(Isolate, Code), Origin);
 
-        elapsed = std::chrono::duration_cast<‌std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - m_beg).count();
+        elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - m_beg).count();
         m_beg = std::chrono::high_resolution_clock::now();
         PLog(puerts::Log, "[PuertsDLL]ScriptCompiler::CompileModule start elapsed=%f", elapsed);
 
@@ -142,7 +142,7 @@ namespace puerts {
             return v8::MaybeLocal<v8::Module> {};
         }
 
-        elapsed = std::chrono::duration_cast<‌std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - m_beg).count();
+        elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - m_beg).count();
         m_beg = std::chrono::high_resolution_clock::now();
         PLog(puerts::Log, "[PuertsDLL]ScriptCompiler::CompileModule over elapsed=%f", elapsed);
 
