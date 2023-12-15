@@ -98,7 +98,7 @@ namespace puerts {
         }
         v8::Local<v8::Module> Module;
         char* pathForDebug;
-        std::chrono::time_point<‌std::chrono::high_resolution_clock> m_beg = std::chrono::high_resolution_clock::now();
+        std::chrono::time_point<std::chrono::high_resolution_clock> m_beg = std::chrono::high_resolution_clock::now();
         double elapsed = 0;
         PLog(puerts::Log, "[PuertsDLL]JsEngine->ModuleResolver start");
         const char* Code = JsEngine->ModuleResolver(Specifier_std.c_str(), JsEngine->Idx, pathForDebug);
