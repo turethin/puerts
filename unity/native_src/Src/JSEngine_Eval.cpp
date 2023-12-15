@@ -77,6 +77,8 @@ namespace puerts {
         bool& isFromCache
     )
     {
+        std::chrono::time_point<std::chrono::high_resolution_clock> m_start = std::chrono::high_resolution_clock::now();
+        std::chrono::time_point<std::chrono::high_resolution_clock> m_beg = m_start;
         v8::Isolate* Isolate = Context->GetIsolate();
         auto* JsEngine = FV8Utils::IsolateData<JSEngine>(Isolate);
         
@@ -90,6 +92,8 @@ namespace puerts {
             Specifier_std = NormalizePath(Specifier_std, referPath_std);
         }
 
+        PLog(puerts::Log, "[PuertsDLL]JsEngine->ModuleResolver start %s", Specifier_std.c_str());
+
         const auto cacheIter = JsEngine->PathToModuleMap.find(Specifier_std);
         if (cacheIter != JsEngine->PathToModuleMap.end())//create and link
         {
@@ -98,12 +102,9 @@ namespace puerts {
         }
         v8::Local<v8::Module> Module;
         char* pathForDebug;
-        std::chrono::time_point<std::chrono::high_resolution_clock> m_beg = std::chrono::high_resolution_clock::now();
-        double elapsed = 0;
-        PLog(puerts::Log, "[PuertsDLL]JsEngine->ModuleResolver start");
         const char* Code = JsEngine->ModuleResolver(Specifier_std.c_str(), JsEngine->Idx, pathForDebug);
 
-        elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - m_beg).count();
+        double elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - m_beg).count();
         m_beg = std::chrono::high_resolution_clock::now();
         PLog(puerts::Log, "[PuertsDLL]JsEngine->ModuleResolver over elapsed=%f", elapsed);
 
@@ -148,6 +149,10 @@ namespace puerts {
 
         JsEngine->ScriptIdToPathMap[Module->ScriptId()] = Specifier_std;
         JsEngine->PathToModuleMap[Specifier_std] = v8::UniquePersistent<v8::Module>(Isolate, Module);
+
+        elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - m_start).count();
+        PLog(puerts::Log, "[PuertsDLL]JsEngine_Eval->_ResolveModule over %s elapsed=%f", Specifier_std.c_str(), elapsed);
+
         return Module;
     }
     v8::MaybeLocal<v8::Module> ResolveModule(
@@ -221,7 +226,6 @@ namespace puerts {
         }
 
         char* pathForDebug;
-        PLog(puerts::Log, "[PuertsDLL]JsEngine->ModuleResolver start2");
         const char* Code = JsEngine->ModuleResolver(name_std.c_str(), JsEngine->Idx, pathForDebug);
         if (Code == nullptr) 
         {
@@ -250,7 +254,9 @@ namespace puerts {
 
     bool JSEngine::ExecuteModule(const char* Path, const char* Exportee) 
     {
-        PLog(puerts::Log, "[PuertsDLL]JSEngine::ExecuteModule");
+        PLog(puerts::Log, "[PuertsDLL]======JSEngine::ExecuteModule %s", Path);
+        std::chrono::time_point<std::chrono::high_resolution_clock> m_start = std::chrono::high_resolution_clock::now();
+        std::chrono::time_point<std::chrono::high_resolution_clock> m_beg = m_start;
         if (ModuleResolver == nullptr) 
         {
             return false;
@@ -278,10 +284,18 @@ namespace puerts {
                             v8::PrimitiveArray::New(Isolate, 10));
         
         v8::ScriptCompiler::Source Source(FV8Utils::V8String(Isolate, ""), Origin);
+
         v8::Local<v8::Module> EntryModule = v8::ScriptCompiler::CompileModule(Isolate, &Source, v8::ScriptCompiler::kNoCompileOptions)
                 .ToLocalChecked();
                 
+        double elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - m_beg).count();
+        m_beg = std::chrono::high_resolution_clock::now();
+        PLog(puerts::Log, "[PuertsDLL]JSEngine::CompileModule over elapsed=%f", elapsed);
         v8::MaybeLocal<v8::Module> Module = ResolveModule(Context, FV8Utils::V8String(Isolate, Path), EntryModule);
+
+        elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - m_beg).count();
+        m_beg = std::chrono::high_resolution_clock::now();
+        PLog(puerts::Log, "[PuertsDLL]JSEngine::ResolveModule over elapsed=%f", elapsed);
 
         if (Module.IsEmpty())
         {
@@ -337,6 +351,10 @@ namespace puerts {
                 }
             }
         }
+
+        elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - m_start).count();
+        PLog(puerts::Log, "[PuertsDLL]======JSEngine::ExecuteModule over %s elapsed=%f", Path, elapsed);
+
         return true;
 #else
         JS_SetModuleLoaderFunc(MainIsolate->runtime_, NULL, js_module_loader, NULL);
