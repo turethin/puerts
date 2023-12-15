@@ -7,6 +7,7 @@
 #include "JSEngine.h"
 #include <cstring>
 #include "V8Utils.h"
+#include "Log.h"
 
 #define API_LEVEL 19
 
@@ -80,6 +81,7 @@ V8_EXPORT void SetModuleResolver(v8::Isolate *Isolate, CSharpModuleResolveCallba
 
 V8_EXPORT FResultInfo * ExecuteModule(v8::Isolate *Isolate, const char* Path, const char* Exportee)
 {
+    PLog(puerts::Log, "[PuertsDLL]ExecuteModule");
     auto JsEngine = FV8Utils::IsolateData<JSEngine>(Isolate);
     if (JsEngine->ExecuteModule(Path, Exportee))
     {

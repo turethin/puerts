@@ -221,6 +221,7 @@ namespace puerts {
         }
 
         char* pathForDebug;
+        PLog(puerts::Log, "[PuertsDLL]JsEngine->ModuleResolver start2");
         const char* Code = JsEngine->ModuleResolver(name_std.c_str(), JsEngine->Idx, pathForDebug);
         if (Code == nullptr) 
         {
@@ -249,6 +250,7 @@ namespace puerts {
 
     bool JSEngine::ExecuteModule(const char* Path, const char* Exportee) 
     {
+        PLog(puerts::Log, "[PuertsDLL]JSEngine::ExecuteModule");
         if (ModuleResolver == nullptr) 
         {
             return false;
