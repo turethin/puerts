@@ -6,6 +6,7 @@
 */
 #include <algorithm>
 #include "JSEngine.h"
+#include "Log.h"
 #if WITH_QUICKJS
 #include "quickjs-msvc.h"
 #endif
@@ -95,7 +96,9 @@ namespace puerts {
         }
         v8::Local<v8::Module> Module;
         char* pathForDebug;
+        PLog(puerts::Log, "[PuertsDLL]JsEngine->ModuleResolver start");
         const char* Code = JsEngine->ModuleResolver(Specifier_std.c_str(), JsEngine->Idx, pathForDebug);
+        PLog(puerts::Log, "[PuertsDLL]JsEngine->ModuleResolver over");
         if (Code == nullptr) 
         {
             const std::string ErrorMessage = std::string("module not found ") + Specifier_std;
@@ -116,14 +119,16 @@ namespace puerts {
 
         v8::ScriptCompiler::CompileOptions options;
         
+        PLog(puerts::Log, "[PuertsDLL]ScriptCompiler::CompileModule start before");
         v8::ScriptCompiler::Source Source(FV8Utils::V8String(Isolate, Code), Origin);
-
+        PLog(puerts::Log, "[PuertsDLL]ScriptCompiler::CompileModule start");
         if (!v8::ScriptCompiler::CompileModule(Isolate, &Source, v8::ScriptCompiler::kNoCompileOptions)
                 .ToLocal(&Module)) 
         {
             JsEngine->SetLastException(TryCatch.Exception());
             return v8::MaybeLocal<v8::Module> {};
         }
+        PLog(puerts::Log, "[PuertsDLL]ScriptCompiler::CompileModule over");
         JsEngine->ScriptIdToPathMap[Module->ScriptId()] = Specifier_std;
         JsEngine->PathToModuleMap[Specifier_std] = v8::UniquePersistent<v8::Module>(Isolate, Module);
         return Module;
