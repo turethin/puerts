@@ -329,6 +329,10 @@ namespace puerts {
         PLog(puerts::Log, "[PuertsDLL]JSEngine::InstantiateModule over elapsed=%f", elapsed);
 
         v8::MaybeLocal<v8::Value> evalRet = ModuleChecked->Evaluate(Context);
+
+        elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - m_beg).count();
+        m_beg = std::chrono::high_resolution_clock::now();
+        PLog(puerts::Log, "[PuertsDLL]JSEngine::Evaluate elapsed=%f", elapsed);
         if (evalRet.IsEmpty())
         {   
             if (TryCatch.HasCaught())
@@ -345,6 +349,9 @@ namespace puerts {
                 if (*Exportee == 0) 
                 {
                     ResultInfo.Result.Reset(Isolate, ns);
+
+                    double elapsed2 = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - m_beg).count();
+                    PLog(puerts::Log, "[PuertsDLL]JSEngine::ResultInfo.Result2 elapsed=%f", elapsed2);
                 } 
                 else 
                 {
@@ -352,6 +359,9 @@ namespace puerts {
                         Isolate, 
                         ns.As<v8::Object>()->Get(Context, FV8Utils::V8String(Isolate, Exportee)).ToLocalChecked()
                     );
+
+                    double elapsed3 = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - m_beg).count();
+                    PLog(puerts::Log, "[PuertsDLL]JSEngine::ResultInfo.Result3 elapsed=%f", elapsed3);
                 }
             }
         }
