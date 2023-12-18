@@ -328,20 +328,20 @@ namespace puerts {
         m_beg = std::chrono::high_resolution_clock::now();
         PLog(puerts::Log, "[PuertsDLL]JSEngine::InstantiateModule over elapsed=%f", elapsed);
 
-        // v8::MaybeLocal<v8::Value> evalRet = ModuleChecked->Evaluate(Context);
+        v8::MaybeLocal<v8::Value> evalRet = ModuleChecked->Evaluate(Context);
 
-        // elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - m_beg).count();
-        // m_beg = std::chrono::high_resolution_clock::now();
-        // PLog(puerts::Log, "[PuertsDLL]JSEngine::Evaluate elapsed=%f", elapsed);
-        // if (evalRet.IsEmpty())
-        // {   
-        //     if (TryCatch.HasCaught())
-        //     {
-        //         SetLastException(TryCatch.Exception());
-        //     }
-        //     return false;
-        // }
-        // else
+        elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - m_beg).count();
+        m_beg = std::chrono::high_resolution_clock::now();
+        PLog(puerts::Log, "[PuertsDLL]JSEngine::Evaluate elapsed=%f", elapsed);
+        if (evalRet.IsEmpty())
+        {   
+            if (TryCatch.HasCaught())
+            {
+                SetLastException(TryCatch.Exception());
+            }
+            return false;
+        }
+        else
         {
             if (Exportee != nullptr) 
             {
