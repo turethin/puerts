@@ -4,11 +4,13 @@
 * Puerts is licensed under the BSD 3-Clause License, except for the third-party components listed in the file 'LICENSE' which may be subject to their corresponding license terms.
 * This file is subject to the terms and conditions defined in file 'LICENSE', which is part of this source code package.
 */
+#include <iostream>
+#include <chrono>
 
 #include "JSFunction.h"
 #include "V8Utils.h"
 #include "JSEngine.h"
-
+#include "Log.h"
 namespace puerts
 {
     JSObject::JSObject(v8::Isolate* InIsolate, v8::Local<v8::Context> InContext, v8::Local<v8::Object> InObject, int32_t InIndex) 
@@ -89,6 +91,10 @@ namespace puerts
 
     bool JSFunction::Invoke(bool HasResult)
     {
+        PLog(puerts::Log, "[PuertsDLL]======JSFunction::Invoke");
+        std::chrono::time_point<std::chrono::high_resolution_clock> m_start = std::chrono::high_resolution_clock::now();
+        std::chrono::time_point<std::chrono::high_resolution_clock> m_beg = m_start;
+
         v8::Isolate* Isolate = ResultInfo.Isolate;
 #ifdef THREAD_SAFE
         v8::Locker Locker(Isolate);
@@ -106,8 +112,17 @@ namespace puerts
         }
         Arguments.clear();
         v8::TryCatch TryCatch(Isolate);
+
+        double elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - m_beg).count();
+        m_beg = std::chrono::high_resolution_clock::now();
+        PLog(puerts::Log, "[PuertsDLL]GFunction.Get(Isolate)->Call before elapsed=%f", elapsed);
+
         auto maybeValue = GFunction.Get(Isolate)->Call(Context, Context->Global(), static_cast<int>(V8Args.size()), V8Args.data());
         
+        elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - m_beg).count();
+        m_beg = std::chrono::high_resolution_clock::now();
+        PLog(puerts::Log, "[PuertsDLL]GFunction.Get(Isolate)->Call over elapsed=%f", elapsed);
+
         if (TryCatch.HasCaught())
         {
             v8::Local<v8::Value> Exception = TryCatch.Exception();
@@ -121,6 +136,10 @@ namespace puerts
             {
                 ResultInfo.Result.Reset(Isolate, maybeValue.ToLocalChecked());
             }
+
+            elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - m_start).count();
+            PLog(puerts::Log, "[PuertsDLL]JSFunction::Invoke over elapsed=%f", elapsed);
+
             return true;
         }
     }
