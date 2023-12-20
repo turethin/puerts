@@ -115,13 +115,13 @@ namespace puerts
 
         double elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - m_beg).count();
         m_beg = std::chrono::high_resolution_clock::now();
-        PLog(puerts::Log, "[PuertsDLL]GFunction.Get(Isolate)->Call before elapsed=%f", elapsed);
+        // PLog(puerts::Log, "[PuertsDLL]GFunction.Get(Isolate)->Call before elapsed=%f", elapsed);
 
         auto maybeValue = GFunction.Get(Isolate)->Call(Context, Context->Global(), static_cast<int>(V8Args.size()), V8Args.data());
         
         elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - m_beg).count();
         m_beg = std::chrono::high_resolution_clock::now();
-        PLog(puerts::Log, "[PuertsDLL]GFunction.Get(Isolate)->Call over elapsed=%f", elapsed);
+        // PLog(puerts::Log, "[PuertsDLL]GFunction.Get(Isolate)->Call over elapsed=%f", elapsed);
 
         if (TryCatch.HasCaught())
         {

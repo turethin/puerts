@@ -127,8 +127,6 @@ namespace puerts {
         v8::TryCatch TryCatch(Isolate);
 
         v8::ScriptCompiler::CompileOptions options;
-        
-        PLog(puerts::Log, "[PuertsDLL]ScriptCompiler::CompileModule start before");
 
         v8::ScriptCompiler::Source Source(FV8Utils::V8String(Isolate, Code), Origin);
 
@@ -351,7 +349,6 @@ namespace puerts {
                     ResultInfo.Result.Reset(Isolate, ns);
 
                     double elapsed2 = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - m_beg).count();
-                    PLog(puerts::Log, "[PuertsDLL]JSEngine::ResultInfo.Result2 elapsed=%f", elapsed2);
                 } 
                 else 
                 {
@@ -360,15 +357,15 @@ namespace puerts {
                         ns.As<v8::Object>()->Get(Context, FV8Utils::V8String(Isolate, Exportee)).ToLocalChecked()
                     );
 
-                    double elapsed3 = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - m_beg).count();
-                    PLog(puerts::Log, "[PuertsDLL]JSEngine::ResultInfo.Result3 elapsed=%f", elapsed3);
+                    // double elapsed3 = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - m_beg).count();
+                    // PLog(puerts::Log, "[PuertsDLL]JSEngine::ResultInfo.Result elapsed=%f", elapsed3);
                 }
             }
         }
 
-        elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - m_beg).count();
-        m_beg = std::chrono::high_resolution_clock::now();
-        PLog(puerts::Log, "[PuertsDLL]JSEngine::Evaluate over elapsed=%f", elapsed);
+        // elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - m_beg).count();
+        // m_beg = std::chrono::high_resolution_clock::now();
+        // PLog(puerts::Log, "[PuertsDLL]JSEngine::Evaluate over elapsed=%f", elapsed);
 
         elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - m_start).count();
         PLog(puerts::Log, "[PuertsDLL]======JSEngine::ExecuteModule over %s elapsed=%f", Path, elapsed);
