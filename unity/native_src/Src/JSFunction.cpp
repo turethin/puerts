@@ -91,7 +91,7 @@ namespace puerts
 
     bool JSFunction::Invoke(bool HasResult)
     {
-        PLog(puerts::Log, "[PuertsDLL]======JSFunction::Invoke");
+        // PLog(puerts::Log, "[PuertsDLL]======JSFunction::Invoke");
         std::chrono::time_point<std::chrono::high_resolution_clock> m_start = std::chrono::high_resolution_clock::now();
         std::chrono::time_point<std::chrono::high_resolution_clock> m_beg = m_start;
 
@@ -138,7 +138,7 @@ namespace puerts
             }
 
             elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - m_start).count();
-            PLog(puerts::Log, "[PuertsDLL]JSFunction::Invoke over elapsed=%f", elapsed);
+            // PLog(puerts::Log, "[PuertsDLL]JSFunction::Invoke over elapsed=%f", elapsed);
 
             return true;
         }
